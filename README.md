@@ -1,5 +1,13 @@
 # Bun - React - Tailwind - Shadcn | Starting Template
 
+# Deskripsi 
+
+> **_Saya sedang belajar membuat aplikasi Counter sederhana yang dibangun menggunakan React.  
+Aplikasi ini berguna untuk menambahkan dan mengurangi angka melalui tombol dan menggunakan state untuk menyimpan nilai._**
+ 
+ ## DOKUMENTASI
+ ![alt text](image.png)
+
 To install dependencies:
 
 ```bash
