@@ -1,4 +1,4 @@
-import type { LoginFormValues, LoginResponse } from '@/interfaces'
+import type { LoginFormValues } from '@/interfaces'
 import { useState } from 'react'
 import { useForm } from '@tanstack/react-form'
 import { toast } from 'sonner'
@@ -8,16 +8,15 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
 import * as z from "zod";
-import { api2 } from '@/lib';
-import Cookie from 'js-cookie';
 import { Eye, EyeOff } from "lucide-react"
 import { ButtonTheme } from './ButtonTheme'
 import { useNavigate } from '@tanstack/react-router'
+import { useAuthStore } from '@/stores'
 
 export const LoginForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
-
   const navigate = useNavigate();
+  const { login } = useAuthStore();
 
   const handleShowPassword = () => {
     setShowPassword((prev) => !prev)
@@ -51,28 +50,13 @@ export const LoginForm: React.FC = () => {
     }
 
     try {
-      const response = await api2.post<LoginResponse>('/auth/login', value);
-      const token: string = response.data.data.accessToken;
-      const expires: string = response.data.data.expiresIn;
+      const res = await login({ value });
 
-      let expiresIn: number;
-      if (expires.endsWith('d')) {
-        expiresIn = parseInt(expires) * 24 * 60 * 60;
-      } else if (expires.endsWith('h')) {
-        expiresIn = parseInt(expires) * 60 * 60;
-      } else if (expires.endsWith('m')) {
-        expiresIn = parseInt(expires) * 60;
-      } else {
-        expiresIn = 0;
-      }
-
-      Cookie.set('token', token, { expires: expiresIn, path: '/' });
-      toast.success(response.data.message || 'Login successful!');
-
+      toast.success(res.message);
       navigate({ to: '/dashboard' });
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Login failed. Please try again.');
-      console.error(error.message);
+      toast.error(error || 'Login failed. Please try again.');
+      console.error(error);
       return;
     }
   }
@@ -80,7 +64,7 @@ export const LoginForm: React.FC = () => {
   const { Field, handleSubmit } = useForm({
     defaultValues,
     validators: {
-      onChange: loginSchema,
+      onSubmit: loginSchema
     },
     onSubmit,
   })
@@ -138,6 +122,7 @@ export const LoginForm: React.FC = () => {
                     placeholder="Enter your password"
                   />
                   <Button
+                    type="button"
                     variant='link'
                     onClick={handleShowPassword}
                     className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer hover:text-slate-500"
