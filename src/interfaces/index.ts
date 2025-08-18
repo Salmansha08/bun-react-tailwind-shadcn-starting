@@ -1,3 +1,4 @@
+export * from './auth.interface';
 export * from './base.interface';
 export * from './theme.interface';
 export * from './login-form.interface';

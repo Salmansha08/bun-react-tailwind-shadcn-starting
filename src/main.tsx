@@ -12,6 +12,7 @@ import { Toaster } from "./components/ui/sonner";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { routeTree } from './routeTree.gen';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AuthInitializer } from "./components/shared";
 
 
 const router = createRouter({ routeTree })
@@ -32,8 +33,10 @@ const app = (
   <StrictMode>
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-        <Toaster />
+        <AuthInitializer>
+          <RouterProvider router={router} />
+          <Toaster />
+        </AuthInitializer>
       </QueryClientProvider>
     </ThemeProvider>
   </StrictMode>
