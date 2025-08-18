@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox'
 import { Birthdate } from './BirthDate'
 import { Textarea } from '@/components/ui/textarea'
+import { ButtonTheme } from './ButtonTheme'
 
 export const RegistrationForm: React.FC = () => {
   const [haveNotes, setHaveNotes] = useState<boolean>(false);
@@ -207,6 +208,7 @@ export const RegistrationForm: React.FC = () => {
           </Button>
         </CardFooter>
       </Card >
+      <ButtonTheme />
     </form >
   )
 }

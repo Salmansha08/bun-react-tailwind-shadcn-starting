@@ -4,3 +4,4 @@ export * from './login-form.interface';
 export * from './register-form.interface';
 export * from './dragonball.interface';
 export * from './table.interface';
+export * from './ui.interface';
