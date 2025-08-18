@@ -7,12 +7,35 @@
 
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { App } from "./App";
+import { ThemeProvider } from "@/context";
+import { Toaster } from "./components/ui/sonner";
+import { createRouter, RouterProvider } from "@tanstack/react-router";
+import { routeTree } from './routeTree.gen';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+
+const router = createRouter({ routeTree })
+
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router
+  }
+}
+
+const queryClient = new QueryClient();
 
 const elem = document.getElementById("root");
+if (!elem) {
+  throw new Error("Root element not found");
+}
 const app = (
   <StrictMode>
-    <App />
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+        <Toaster />
+      </QueryClientProvider>
+    </ThemeProvider>
   </StrictMode>
 );
 
