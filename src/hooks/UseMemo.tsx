@@ -68,16 +68,3 @@ export const UseMemo: React.FC = () => {
   )
 }
 
-// Uncomment the following function if you want to simulate a heavy computation
-// function heavyComputation(a: number, b: number): number {
-//   // Simulate a heavy computation by performing a large loop
-//   let result = 0;
-//   for (let i = 0; i < 1e7; i++) {
-//     result += (a * b) % (i + 1);
-//   }
-//   return result;
-// }
-// function heavyComputation(a: any, b: any): any {
-//   throw new Error("Function not implemented.");
-// }
-
