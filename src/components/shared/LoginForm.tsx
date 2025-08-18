@@ -70,108 +70,110 @@ export const LoginForm: React.FC = () => {
   })
 
   return (
-    <form onSubmit={(e) => {
-      e.preventDefault();
-      handleSubmit();
-    }}>
-      <Card className="flex flex-col w-sm px-4 justify-center">
-        <CardHeader >
-          <CardTitle className='text-xl font-semibold'>Login Form</CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-4">
-          {/* Email */}
-          <Field name="email">
-            {({ state, handleChange, name }) => (
-              <div className="grid gap-2">
-                <Label htmlFor={name} className="text-left">Email</Label>
-                <Input
-                  className='text-sm'
-                  type="email"
-                  id={name}
-                  value={state.value}
-                  onChange={(e) => handleChange(e.target.value)}
-                  placeholder="Enter your email"
-                />
-                {state.meta.errors && (
-                  <p className="text-red-500 text-xs">
-                    {Array.isArray(state.meta.errors)
-                      ? state.meta.errors
-                        .map((err) =>
-                          typeof err === 'string' ? err : err?.message || 'Unknown error'
-                        )
-                        .join(', ')
-                      : String(state.meta.errors)}
-                  </p>
-                )}
-              </div>
-            )}
-          </Field>
-
-          {/* Password */}
-          <Field name="password">
-            {({ state, handleChange, name }) => (
-              <div className="grid gap-2">
-                <Label htmlFor={name} className="text-left">Password</Label>
-                <div className='relative'>
+    <>
+      <form onSubmit={(e) => {
+        e.preventDefault();
+        handleSubmit();
+      }}>
+        <Card className="flex flex-col w-sm px-4 justify-center">
+          <CardHeader >
+            <CardTitle className='text-xl font-semibold'>Login Form</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            {/* Email */}
+            <Field name="email">
+              {({ state, handleChange, name }) => (
+                <div className="grid gap-2">
+                  <Label htmlFor={name} className="text-left">Email</Label>
                   <Input
                     className='text-sm'
-                    type={showPassword ? "text" : "password"}
+                    type="email"
                     id={name}
                     value={state.value}
                     onChange={(e) => handleChange(e.target.value)}
-                    placeholder="Enter your password"
+                    placeholder="Enter your email"
                   />
-                  <Button
-                    type="button"
-                    variant='link'
-                    onClick={handleShowPassword}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer hover:text-slate-500"
-                  >
-                    {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
-                  </Button>
+                  {state.meta.errors && (
+                    <p className="text-red-500 text-xs">
+                      {Array.isArray(state.meta.errors)
+                        ? state.meta.errors
+                          .map((err) =>
+                            typeof err === 'string' ? err : err?.message || 'Unknown error'
+                          )
+                          .join(', ')
+                        : String(state.meta.errors)}
+                    </p>
+                  )}
                 </div>
-                {state.meta.errors && (
-                  <p className="text-red-500 text-xs">
-                    {Array.isArray(state.meta.errors)
-                      ? state.meta.errors
-                        .map((err) =>
-                          typeof err === 'string' ? err : err?.message || 'Unknown error'
-                        )
-                        .join(', ')
-                      : String(state.meta.errors)}
-                  </p>
-                )}
-              </div>
-            )}
-          </Field>
+              )}
+            </Field>
 
-          {/* Remember Me */}
-          <Field name="rememberMe">
-            {({ state, handleChange, name }) => (
-              <div className="grid gap-2">
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center">
-                    <Checkbox
+            {/* Password */}
+            <Field name="password">
+              {({ state, handleChange, name }) => (
+                <div className="grid gap-2">
+                  <Label htmlFor={name} className="text-left">Password</Label>
+                  <div className='relative'>
+                    <Input
+                      className='text-sm'
+                      type={showPassword ? "text" : "password"}
                       id={name}
-                      checked={Boolean(state.value)}
-                      onCheckedChange={(checked) => handleChange(Boolean(checked))}
-                      className='cursor-pointer'
+                      value={state.value}
+                      onChange={(e) => handleChange(e.target.value)}
+                      placeholder="Enter your password"
                     />
-                    <Label htmlFor={name} className="ml-2">Remember Me</Label>
+                    <Button
+                      type="button"
+                      variant='link'
+                      onClick={handleShowPassword}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer hover:text-slate-500"
+                    >
+                      {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                    </Button>
+                  </div>
+                  {state.meta.errors && (
+                    <p className="text-red-500 text-xs">
+                      {Array.isArray(state.meta.errors)
+                        ? state.meta.errors
+                          .map((err) =>
+                            typeof err === 'string' ? err : err?.message || 'Unknown error'
+                          )
+                          .join(', ')
+                        : String(state.meta.errors)}
+                    </p>
+                  )}
+                </div>
+              )}
+            </Field>
+
+            {/* Remember Me */}
+            <Field name="rememberMe">
+              {({ state, handleChange, name }) => (
+                <div className="grid gap-2">
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center">
+                      <Checkbox
+                        id={name}
+                        checked={Boolean(state.value)}
+                        onCheckedChange={(checked) => handleChange(Boolean(checked))}
+                        className='cursor-pointer'
+                      />
+                      <Label htmlFor={name} className="ml-2">Remember Me</Label>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-          </Field>
+              )}
+            </Field>
 
-        </CardContent >
-        <CardFooter className="flex-col gap-2">
-          <Button type="submit" className="w-full cursor-pointer">
-            Submit
-          </Button>
-        </CardFooter>
-      </Card >
+          </CardContent >
+          <CardFooter className="flex-col gap-2">
+            <Button type="submit" className="w-full cursor-pointer">
+              Submit
+            </Button>
+          </CardFooter>
+        </Card >
+      </form >
       <ButtonTheme />
-    </form >
+    </>
   )
 }

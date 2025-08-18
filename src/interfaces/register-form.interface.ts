@@ -10,19 +10,3 @@ export interface RegisterFormValues {
   learningPath: LearningPath;
   notes?: string;
 }
-
-export interface LoginResponse {
-  statusCode: number,
-  message: string,
-  timestamp: string,
-  data: {
-    user: {
-      id: string,
-      name: string,
-      email: string,
-      role: string
-    },
-    accessToken: string,
-    expiresIn: string
-  }
-}
