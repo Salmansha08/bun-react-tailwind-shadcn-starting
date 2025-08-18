@@ -138,14 +138,11 @@
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
-
-@layer base {
   :root {
     @apply font-sans;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }
 

@@ -13,7 +13,7 @@ export function App({ children }: Readonly<{ children: React.ReactNode }>) {
   //
 
   return (
-    <main className="flex min-h-screen w-full flex-col items-center justify-center p-8">
+    <main className="min-h-screen w-full">
       {children}
     </main>
   );
