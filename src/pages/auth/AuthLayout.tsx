@@ -1,6 +1,5 @@
 import App from '@/App';
-import { NavBar } from '@/components/shared/Navbar';
-import React from 'react'
+import { NavBar } from '@/components/shared';
 
 export function AuthLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
