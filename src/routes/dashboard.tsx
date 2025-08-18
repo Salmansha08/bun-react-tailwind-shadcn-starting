@@ -1,4 +1,5 @@
 import App from '@/App'
+import { DashboardPage } from '@/pages/dashboard/DashboardPage'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/dashboard')({
@@ -8,7 +9,7 @@ export const Route = createFileRoute('/dashboard')({
 function Dashboard() {
   return (
     <App>
-      <h1 className="text-3xl font-bold">Dashboard</h1>
+      <DashboardPage />
     </App>
   )
 }

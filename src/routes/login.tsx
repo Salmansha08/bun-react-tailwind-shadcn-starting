@@ -1,5 +1,5 @@
 import App from '@/App'
-import { LoginForm } from '@/components/shared'
+import { LoginPage } from '@/pages/auth/login/LoginPage'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/login')({
@@ -9,7 +9,7 @@ export const Route = createFileRoute('/login')({
 function Login() {
   return (
     <App>
-      <LoginForm />
+      <LoginPage />
     </App>
   )
 }
