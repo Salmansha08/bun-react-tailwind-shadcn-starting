@@ -36,7 +36,6 @@ export const RegistrationForm: React.FC = () => {
   const { Field, handleSubmit } = useForm({
     defaultValues,
     onSubmit: async ({ value }) => {
-      console.log(value);
       toast(JSON.stringify(value));
     }
   })

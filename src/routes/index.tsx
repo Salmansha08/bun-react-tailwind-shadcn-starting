@@ -1,12 +1,16 @@
-import App from '@/App'
-import { createFileRoute } from '@tanstack/react-router'
+import { useEffect } from "react";
+import { useNavigate, createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute("/")({
   component: Index,
-})
+});
 
 function Index() {
-  return (
-    <App />
-  )
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    navigate({ to: "/dashboard", replace: true });
+  }, [navigate]);
+
+  return null;
 }

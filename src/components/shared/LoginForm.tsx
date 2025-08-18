@@ -1,5 +1,5 @@
-import type { LoginFormValues } from '@/interfaces'
-import React from 'react'
+import type { LoginFormValues, LoginResponse } from '@/interfaces'
+import { useState } from 'react'
 import { useForm } from '@tanstack/react-form'
 import { toast } from 'sonner'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
@@ -8,12 +8,28 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
 import * as z from "zod";
-import { api2 } from '@/lib/api';
-import Cookies from "js-cookie";
+import { api2 } from '@/lib';
+import Cookie from 'js-cookie';
+import { Eye, EyeOff } from "lucide-react"
+import { ButtonTheme } from './ButtonTheme'
+import { useNavigate } from '@tanstack/react-router'
 
 export const LoginForm: React.FC = () => {
+  const [showPassword, setShowPassword] = useState(false);
 
-  const userSchema = z.object({
+  const navigate = useNavigate();
+
+  const handleShowPassword = () => {
+    setShowPassword((prev) => !prev)
+  }
+
+  const defaultValues: LoginFormValues = {
+    email: '',
+    password: '',
+    rememberMe: false
+  }
+
+  const loginSchema = z.object({
     email: z.email('Invalid email address'),
     password: z.string()
       .min(8, 'Password must be at least 8 characters long')
@@ -22,55 +38,61 @@ export const LoginForm: React.FC = () => {
         /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).+$/,
         'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
       ),
-    rememberMe: z.boolean().default(false)
+    rememberMe: z.boolean()
   })
 
-  const defaultValues: LoginFormValues = {
-    email: '',
-    password: '',
-    rememberMe: false
+  const onSubmit = async ({ value }: { value: LoginFormValues }) => {
+    const parsed = loginSchema.safeParse(value);
+    if (!parsed.success) {
+      const errors = parsed.error;
+      const errorMessages = Object.values(errors).flat().join(', ');
+      toast.error(errorMessages || 'Validation failed');
+      return;
+    }
+
+    try {
+      const response = await api2.post<LoginResponse>('/auth/login', value);
+      const token: string = response.data.data.accessToken;
+      const expires: string = response.data.data.expiresIn;
+
+      let expiresIn: number;
+      if (expires.endsWith('d')) {
+        expiresIn = parseInt(expires) * 24 * 60 * 60;
+      } else if (expires.endsWith('h')) {
+        expiresIn = parseInt(expires) * 60 * 60;
+      } else if (expires.endsWith('m')) {
+        expiresIn = parseInt(expires) * 60;
+      } else {
+        expiresIn = 0;
+      }
+
+      Cookie.set('token', token, { expires: expiresIn, path: '/' });
+      toast.success(response.data.message || 'Login successful!');
+
+      navigate({ to: '/dashboard' });
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Login failed. Please try again.');
+      console.error(error.message);
+      return;
+    }
   }
 
   const { Field, handleSubmit } = useForm({
     defaultValues,
     validators: {
-      onChange: ({ value }) => {
-        const parsed = userSchema.safeParse(value);
-        if (!parsed.success) {
-          return parsed.error.message;
-        }
-        return {};
-      }
+      onChange: loginSchema,
     },
-    onSubmit: async ({ value }) => {
-      const parsed = userSchema.safeParse(value);
-      if (!parsed.success) {
-        toast.error('Please fix validation errors');
-        return;
-      }
-      api2.post('/auth/login', value)
-        .then((response) => {
-          const token: string = response.data.data.accessToken;
-          const expires = response.data.data.expiresIn;
-          Cookies.set('accessToken', token, { expires });
-          toast.success('Login successful');
-        })
-        .catch((error) => {
-          toast.error(`Login failed: ${error.message}`);
-        });
-    }
+    onSubmit,
   })
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        handleSubmit();
-      }}
-    >
-      <Card className="w-full max-w-md px-4">
+    <form onSubmit={(e) => {
+      e.preventDefault();
+      handleSubmit();
+    }}>
+      <Card className="flex flex-col w-sm px-4 justify-center">
         <CardHeader >
-          <CardTitle>Login Form</CardTitle>
+          <CardTitle className='text-xl font-semibold'>Login Form</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4">
           {/* Email */}
@@ -79,12 +101,24 @@ export const LoginForm: React.FC = () => {
               <div className="grid gap-2">
                 <Label htmlFor={name} className="text-left">Email</Label>
                 <Input
+                  className='text-sm'
                   type="email"
                   id={name}
                   value={state.value}
                   onChange={(e) => handleChange(e.target.value)}
                   placeholder="Enter your email"
                 />
+                {state.meta.errors && (
+                  <p className="text-red-500 text-xs">
+                    {Array.isArray(state.meta.errors)
+                      ? state.meta.errors
+                        .map((err) =>
+                          typeof err === 'string' ? err : err?.message || 'Unknown error'
+                        )
+                        .join(', ')
+                      : String(state.meta.errors)}
+                  </p>
+                )}
               </div>
             )}
           </Field>
@@ -94,12 +128,34 @@ export const LoginForm: React.FC = () => {
             {({ state, handleChange, name }) => (
               <div className="grid gap-2">
                 <Label htmlFor={name} className="text-left">Password</Label>
-                <Input
-                  type="password"
-                  id={name}
-                  value={state.value}
-                  onChange={(e) => handleChange(e.target.value)}
-                />
+                <div className='relative'>
+                  <Input
+                    className='text-sm'
+                    type={showPassword ? "text" : "password"}
+                    id={name}
+                    value={state.value}
+                    onChange={(e) => handleChange(e.target.value)}
+                    placeholder="Enter your password"
+                  />
+                  <Button
+                    variant='link'
+                    onClick={handleShowPassword}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer hover:text-slate-500"
+                  >
+                    {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </Button>
+                </div>
+                {state.meta.errors && (
+                  <p className="text-red-500 text-xs">
+                    {Array.isArray(state.meta.errors)
+                      ? state.meta.errors
+                        .map((err) =>
+                          typeof err === 'string' ? err : err?.message || 'Unknown error'
+                        )
+                        .join(', ')
+                      : String(state.meta.errors)}
+                  </p>
+                )}
               </div>
             )}
           </Field>
@@ -110,10 +166,14 @@ export const LoginForm: React.FC = () => {
               <div className="grid gap-2">
                 <div className="flex items-center gap-2">
                   <div className="flex items-center">
-                    <Checkbox id={name} defaultChecked={false} />
+                    <Checkbox
+                      id={name}
+                      checked={Boolean(state.value)}
+                      onCheckedChange={(checked) => handleChange(Boolean(checked))}
+                      className='cursor-pointer'
+                    />
                     <Label htmlFor={name} className="ml-2">Remember Me</Label>
                   </div>
-
                 </div>
               </div>
             )}
@@ -121,11 +181,12 @@ export const LoginForm: React.FC = () => {
 
         </CardContent >
         <CardFooter className="flex-col gap-2">
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full cursor-pointer">
             Submit
           </Button>
         </CardFooter>
       </Card >
+      <ButtonTheme />
     </form >
   )
 }
