@@ -1,7 +1,7 @@
 import axios, { type AxiosInstance } from "axios";
 
 export const api: AxiosInstance = axios.create({
-  baseURL: String(import.meta.env.BUN_PUBLIC_DRAGONBALL_URL),
+  baseURL: String(process.env.BUN_PUBLIC_DRAGONBALL_URL),
   timeout: 10000
 });
 
