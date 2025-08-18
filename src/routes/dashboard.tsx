@@ -1,6 +1,7 @@
 import App from '@/App'
 import { DashboardPage } from '@/pages/dashboard/DashboardPage'
 import { useAuthStore } from '@/stores'
+import type { CookieType } from '@/types'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import Cookies from 'js-cookie'
 import { toast } from 'sonner'
@@ -19,7 +20,8 @@ function Dashboard() {
 }
 
 async function authCheck({ location }) {
-  const token = Cookies.get('accessToken');
+  const cookieName: CookieType = 'accessToken';
+  const token = Cookies.get(cookieName);
 
   if (!token) {
     throw redirect({

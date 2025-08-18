@@ -1,5 +1,8 @@
+import type { CookieType } from "@/types";
 import axios, { type AxiosInstance } from "axios";
 import Cookies from "js-cookie";
+
+const cookieName: CookieType = 'accessToken';
 
 export const api: AxiosInstance = axios.create({
   baseURL: String(process.env.BUN_PUBLIC_DRAGONBALL_URL),
@@ -15,7 +18,7 @@ export const api2: AxiosInstance = axios.create({
 });
 
 api2.interceptors.request.use((config) => {
-  const token = Cookies.get('accessToken');
+  const token = Cookies.get(cookieName);
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -27,7 +30,7 @@ api2.interceptors.response.use((response) => {
 }, (error) => {
 
   if (error.response?.status === 401) {
-    Cookies.remove('accessToken');
+    Cookies.remove(cookieName);
   }
 
   if (error instanceof Error) {

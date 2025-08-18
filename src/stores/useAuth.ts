@@ -3,6 +3,9 @@ import { persist } from 'zustand/middleware';
 import { api2 } from '@/lib/api';
 import Cookie from 'js-cookie';
 import type { AuthState, AuthUser, LoginFormValues, LoginResponse } from '@/interfaces';
+import type { CookieType } from '@/types';
+
+const cookieName: CookieType = 'accessToken';
 
 export const useAuthStore = create<AuthState>()(
   persist(
@@ -16,7 +19,7 @@ export const useAuthStore = create<AuthState>()(
       },
 
       checkAuth: async () => {
-        const token = Cookie.get('accessToken');
+        const token = Cookie.get(cookieName);
 
         if (!token) {
           set({ user: null, isAuthenticated: false, isLoading: false });
@@ -32,7 +35,7 @@ export const useAuthStore = create<AuthState>()(
             isLoading: false
           });
         } catch (error) {
-          Cookie.remove('accessToken');
+          Cookie.remove(cookieName);
           set({
             user: null,
             isAuthenticated: false,
@@ -59,7 +62,7 @@ export const useAuthStore = create<AuthState>()(
             expiresIn = 0;
           }
 
-          Cookie.set('accessToken', token, { expires: expiresIn, path: '/' });
+          Cookie.set(cookieName, token, { expires: expiresIn, path: '/' });
 
           const response = await api2.get<AuthUser>('/auth/me');
           set({
@@ -70,7 +73,7 @@ export const useAuthStore = create<AuthState>()(
 
           return res.data;
         } catch (error) {
-          Cookie.remove('accessToken');
+          Cookie.remove(cookieName);
           set({
             user: null,
             isAuthenticated: false,
@@ -81,7 +84,7 @@ export const useAuthStore = create<AuthState>()(
       },
 
       logout: () => {
-        Cookie.remove('accessToken');
+        Cookie.remove(cookieName);
         set({
           user: null,
           isAuthenticated: false,
