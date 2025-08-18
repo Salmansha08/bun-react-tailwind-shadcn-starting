@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { api2 } from '@/lib/api';
 import Cookie from 'js-cookie';
-import type { AuthState, AuthUser, LoginFormValues, LoginResponse } from '@/interfaces';
+import type { AuthMe, AuthState, AuthUser, LoginFormValues, LoginResponse } from '@/interfaces';
 import type { CookieType } from '@/types';
 
 const cookieName: CookieType = 'accessToken';
@@ -13,35 +13,10 @@ export const useAuthStore = create<AuthState>()((set) => ({
   setLoading: (loading: boolean) => {
     set({ isLoading: loading });
   },
-  checkAuth: async () => {
-    const token = Cookie.get(cookieName);
-
-    if (!token) {
-      set({ user: null, isAuthenticated: false, isLoading: false });
-      return;
-    }
-
-    try {
-      set({ isLoading: true });
-      const response = await api2.get<AuthUser>('/auth/me');
-      set({
-        user: response.data,
-        isAuthenticated: true,
-        isLoading: false
-      });
-    } catch (error) {
-      Cookie.remove(cookieName);
-      set({
-        user: null,
-        isAuthenticated: false,
-        isLoading: false
-      });
-      throw error;
-    }
-  },
   login: async ({ value }: { value: LoginFormValues }): Promise<LoginResponse> => {
     try {
       const res = await api2.post<LoginResponse>('/auth/login', value);
+
       const token: string = res.data.data.accessToken;
       const expires: string = res.data.data.expiresIn;
 
@@ -58,9 +33,10 @@ export const useAuthStore = create<AuthState>()((set) => ({
 
       Cookie.set(cookieName, token, { expires: expiresIn, path: '/' });
 
-      const response = await api2.get<AuthUser>('/auth/me');
+      const response = await api2.get<AuthMe>('/auth/me');
+      const user: AuthUser = response.data.data;
       set({
-        user: response.data,
+        user,
         isAuthenticated: true,
         isLoading: false
       });
@@ -74,6 +50,37 @@ export const useAuthStore = create<AuthState>()((set) => ({
         isLoading: false
       });
       throw error.response?.data?.message;
+    }
+  },
+  checkAuth: async () => {
+    const token = Cookie.get(cookieName);
+
+    if (!token) {
+      set({
+        user: null,
+        isAuthenticated: false,
+        isLoading: false
+      });
+      return;
+    }
+
+    try {
+      set({ isLoading: true });
+      const response = await api2.get<AuthMe>('/auth/me');
+      const user: AuthUser = response.data.data;
+      set({
+        user,
+        isAuthenticated: true,
+        isLoading: false
+      });
+    } catch (error) {
+      Cookie.remove(cookieName);
+      set({
+        user: null,
+        isAuthenticated: false,
+        isLoading: false
+      });
+      throw error;
     }
   },
   logout: () => {

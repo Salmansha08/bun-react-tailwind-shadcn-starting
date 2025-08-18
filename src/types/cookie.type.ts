@@ -1,1 +1,1 @@
-export type CookieType = 'accessToken' | 'refreshToken';
+export type CookieType = 'accessToken';

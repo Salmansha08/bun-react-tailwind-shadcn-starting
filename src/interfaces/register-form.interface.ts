@@ -10,3 +10,4 @@ export interface RegisterFormValues {
   learningPath: LearningPath;
   notes?: string;
 }
+

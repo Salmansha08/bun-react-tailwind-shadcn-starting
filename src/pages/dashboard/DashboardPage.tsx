@@ -22,7 +22,6 @@ export const DashboardPage = () => {
       >
         Logout
       </Button>
-
     </div>
   )
 }

@@ -1,3 +1,5 @@
+import type { RoleEnum } from "@/enums";
+
 export interface LoginFormValues {
   email: string;
   password: string;
@@ -5,15 +7,15 @@ export interface LoginFormValues {
 }
 
 export interface LoginResponse {
-  statusCode: number,
   message: string,
-  timestamp: string,
+  statusCode: number,
+  date: string,
   data: {
     user: {
       id: string,
       name: string,
       email: string,
-      role: string
+      role: RoleEnum
     },
     accessToken: string,
     expiresIn: string

@@ -46,7 +46,7 @@ export const NavBar = () => {
                 variant="secondary"
                 className="cursor-pointer font-medium transition-colors duration-200"
               >
-                Sign Up
+                Register
               </Button>
             </Link>
           </div>
